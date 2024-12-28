@@ -29,124 +29,223 @@ Publish the website in the given URL.
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gallery</title>
+    <title>Interactive Image Gallery</title>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle, #2b5876, #4e4376);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .heading {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .gallery-container {
-            display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
+            height: 100vh;
             overflow: hidden;
-            margin: 20px auto;
-            max-width: 90%;
-            height: 500px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #fff;
         }
 
-        .gallery-images {
-            display: flex;
-            transition: transform 0.5s ease;
-            max-width: 100%;
+        h1 {
+            font-size: 3em;
+            color: #ffdd59;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            animation: fadeIn 2s ease-in-out;
         }
 
-        .gallery-images img {
-            width: 400px;
-            height: 300px;
-            object-fit: cover;
-            margin: 0 10px;
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 20px;
-            border: none;
-            cursor: pointer;
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 15px;
+            width: 90%;
+            max-width: 1200px;
             padding: 10px;
         }
 
-        .prev-btn {
-            left: 10px;
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .next-btn {
-            right: 10px;
+        .gallery-item:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
 
-        .btn:hover {
-            background: rgba(0, 0, 0, 0.8);
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.2);
+            filter: brightness(0.7);
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            color: #ffdd59;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .overlay {
+            opacity: 1;
+        }
+
+        .full-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .full-screen img {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .full-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5em;
+            color: #ffdd59;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #fff;
         }
     </style>
 </head>
 <body>
-
-<div class="heading">
-    <h1>Gallery</h1>
-    <h2>Switzerland</h2>
-</div>
-<div class="gallery-container">
-    <div class="gallery-images">
-        <img src="s1.jpg" alt="Image 1">
-        <img src="s2.jpg" alt="Image 2">
-        <img src="s3.jpg" alt="Image 3">
-        <img src="s4.jpg" alt="Image 4">
-        <img src="s5.jpg" alt="Image 5">
-        <img src="s6.png" alt="Image 6">
-        <img src="s7.png" alt="Image 7">
-        <img src="s8.png" alt="Image 8">
-        <img src="s9.jpg" alt="Image 9">
+    <h1>Image Gallery</h1>
+    <div class="gallery" id="gallery">
+       
     </div>
 
-    <button class="btn prev-btn" onclick="moveSlide('prev')">&#10094;</button>
-    <button class="btn next-btn" onclick="moveSlide('next')">&#10095;</button>
-</div>
+    <div class="full-screen" id="fullScreen">
+        <button class="close-btn" id="closeBtn">&times;</button>
+        <img id="fullScreenImg" src="" alt="Full View">
+    </div>
 
-<script>
-    let currentSlide = 0; 
-    function moveSlide(direction) {
-        const slides = document.querySelectorAll('.gallery-images img');
-        const totalSlides = slides.length;
+    <script>
+        const gallery = document.getElementById('gallery');
+        const fullScreen = document.getElementById('fullScreen');
+        const fullScreenImg = document.getElementById('fullScreenImg');
+        const closeBtn = document.getElementById('closeBtn');
 
-        if (direction === 'next') {
-            currentSlide = (currentSlide + 1) % totalSlides;
-        } else if (direction === 'prev') {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-        }
-        const gallery = document.querySelector('.gallery-images');
-        gallery.style.transform = `translateX(-${currentSlide * (slides[0].offsetWidth + 20)}px)`;
-    }
-</script>
+    
+        const images = [
+            's1.jpg',
+            's2.jpg',
+            's3.jpg',
+            's4.jpg',
+            's5.jpg',
+            's6.png',
+            's7.png',
+            's8.png',
+            's9.jpg',
+            's1.jpg',
+            's5.jpg',
+            's8.png',
+            
 
+        ];
+
+        
+        images.forEach((src, index) => {
+            const item = document.createElement('div');
+            item.classList.add('gallery-item');
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = `Image ${index + 1}`;
+
+            const overlay = document.createElement('div');
+            overlay.classList.add('overlay');
+            overlay.innerText = `Image ${index + 1}`;
+
+            item.appendChild(img);
+            item.appendChild(overlay);
+            gallery.appendChild(item);
+
+            item.addEventListener('click', () => {
+                fullScreenImg.src = src;
+                fullScreen.classList.add('active');
+            });
+        });
+
+        
+        closeBtn.addEventListener('click', () => {
+            fullScreen.classList.remove('active');
+        });
+
+        
+        fullScreen.addEventListener('click', (e) => {
+            if (e.target === fullScreen || e.target === closeBtn) {
+                fullScreen.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
 
 ~~~
 # OUTPUT:
-![gallery1](https://github.com/user-attachments/assets/a6047fca-675c-4352-9cc9-334d7e119d3d)
+![imagegallery](https://github.com/user-attachments/assets/54890127-550d-46fb-81a3-527c997413b3)
 
-![gallery2](https://github.com/user-attachments/assets/13f46dab-b1cd-4cf6-a22c-f2598050fd3a)
+![galler](https://github.com/user-attachments/assets/1d2bfde1-7f65-4b76-905a-46ce9cd51d07)
+
 
 # RESULT:
 The program for designing an interactive image gallery using HTML, CSS and JavaScript is executed successfully.
